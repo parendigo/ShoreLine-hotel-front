@@ -9,15 +9,15 @@ const EditRoom = () => {
         roomPrice: ""
     })
 
-    const [imagePreview, setImagePreview] = useState("")
+    // const [imagePreview, setImagePreview] = useState("")
     const [successMessage, setSuccessMessage] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
     const { roomId } = useParams()
 
     const handleImageChange = (e) => {
         const selectedImage = e.target.files[0]
-        setRoom({ ...room, photo: selectedImage })
-        setImagePreview(URL.createObjectURL(selectedImage))
+        console.log(URL.createObjectURL(selectedImage))
+        setRoom({ ...room, photo: URL.createObjectURL(selectedImage) })
     }
 
     const handleInputChange = (event) => {
@@ -29,8 +29,11 @@ const EditRoom = () => {
         const fetchRoom = async () => {
             try {
                 const roomData = await getRoomById(roomId)
-                setRoom(roomData)
-                setImagePreview(roomData.photo)
+                setRoom({
+                    roomPrice : roomData.roomPrice,
+                    roomType: roomData.roomType,
+                    photo: 'data:image/jpeg;base64,' + roomData.photo
+                })
             } catch (error) {
                 console.error(error)
             }
@@ -48,7 +51,6 @@ const EditRoom = () => {
                 setSuccessMessage("Room updated successfully!")
                 const updatedRoomData = await getRoomById(roomId)
                 setRoom(updatedRoomData)
-                setImagePreview(updatedRoomData.photo)
                 setErrorMessage("")
             } else {
                 setErrorMessage("Error updating room")
@@ -114,9 +116,9 @@ const EditRoom = () => {
                                 className="form-control"
                                 onChange={handleImageChange}
                             />
-                            {imagePreview && (
+                            {room.photo && (
                                 <img
-                                    src={imagePreview}
+                                    src={room.photo}
                                     alt="Preview  room photo"
                                     style={{maxWidth: "400px", maxHeight: "400px"}}
                                     className="mb-3"></img>

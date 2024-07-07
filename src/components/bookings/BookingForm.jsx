@@ -10,22 +10,26 @@ const BookingForm = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [roomPrice, setRoomPrice] = useState(0);
-    const currentUser = localStorage.getItem("userId");
+    const email = localStorage.getItem("userEmail");
+    const currentDate = new Date().toISOString().split('T')[0]
+
     const [booking, setBooking] = useState({
         guestFullName: "",
-        guestEmail: currentUser,
-        checkInDate: "",
+        guestEmail: email,
+        checkInDate: currentDate,
         checkOutDate: "",
         numberOfAdults: "",
         numberOfChildren: ""
     });
 
-    const email = localStorage.getItem("userId");
+
 
     const {roomId} = useParams()
     const navigate = useNavigate();
 
     const handleInputChange = (e) => {
+        console.log(email)
+        console.log(currentDate)
         const {name, value} = e.target;
         setBooking({...booking, [name]: value})
         setErrorMessage("")
@@ -97,7 +101,7 @@ const BookingForm = () => {
                 <div className="row">
                     <div className="col-md-7">
                         <div className='card card-body mt-5'>
-                            <h4 className='card card-title'> Reserve Room </h4>
+                            <h4 className='card card-title'> Book room </h4>
                             <Form noValidate validated={isValidated} onSubmit={handleSubmit}>
                                 <Form.Group>
                                     <Form.Label htmlFor="guestFullName">Full name: </Form.Label>
@@ -120,7 +124,6 @@ const BookingForm = () => {
                                         type="email"
                                         id="guestEmail"
                                         name="guestEmail"
-                                        defaultValue={email}
                                         value={booking.guestEmail}
                                         placeholder="Enter your email"
                                         onChange={handleInputChange}/>
@@ -141,7 +144,7 @@ const BookingForm = () => {
                                                     name="checkInDate"
                                                     value={booking.checkInDate}
                                                     placeholder="Check-in date"
-                                                    min={moment().format("MMM Do, YYYY")}
+                                                    min={currentDate}
                                                     onChange={handleInputChange}/>
                                                 <Form.Control.Feedback type="invalid">
                                                     Please select check-in date.
@@ -158,7 +161,7 @@ const BookingForm = () => {
                                                     name="checkOutDate"
                                                     value={booking.checkOutDate}
                                                     placeholder="Check-out date"
-                                                    min={moment().format("MMM Do, YYYY")}
+                                                    min={moment().format("dd.mm.yyyy")}
                                                     onChange={handleInputChange}/>
                                                 <Form.Control.Feedback type="invalid">
                                                     Please select check-out date.

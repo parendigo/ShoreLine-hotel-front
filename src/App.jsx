@@ -22,6 +22,7 @@ import Profile from "./components/auth/Profile.jsx";
 import Logout from "./components/auth/Logout.jsx";
 import AuthProvider from "./components/auth/AuthProvider.jsx";
 import RequireAuth from "./components/auth/RequireAuth.jsx";
+import RequireAuthAdmin from "./components/auth/RequireAuthAdmin.jsx";
 
 function App() {
     return (
@@ -31,27 +32,43 @@ function App() {
                     <NavBar/>
                     <Routes>
                         <Route path="/" element={<Home/>}/>
-                        <Route path="/edit-room/:roomId" element={<EditRoom/>}/>
-                        <Route path="/existing-rooms" element={<ExistingRooms/>}/>
-                        <Route path="/add-room" element={<AddRoom/>}/>
-                        <Route path="/book-room/:roomId" element={
-                            <RequireAuth>
-                                <CheckOut/>
-                            </RequireAuth>
+                        <Route path="/edit-room/:roomId" element={
+                            <RequireAuthAdmin>
+                                <EditRoom/>
+                            </RequireAuthAdmin>
                         }/>
+                        <Route path="/existing-rooms" element={<ExistingRooms/>}/>
+                        <Route path="/add-room" element={
+                            <RequireAuthAdmin>
+                                <AddRoom/>
+                            </RequireAuthAdmin>
+                        }/>
+                        <Route path="/book-room/:roomId" element={<CheckOut/>}/>
                         <Route path="/browse-all-rooms" element={<RoomListing/>}/>
                         <Route path="/admin" element={
-                            <RequireAuth>
+                            <RequireAuthAdmin>
                                 <Admin/>
-                            </RequireAuth>
+                            </RequireAuthAdmin>
                         }/>
                         <Route path="/booking-success" element={<BookingSuccess/>}/>
-                        <Route path="/existing-bookings" element={<Bookings/>}/>
+                        <Route path="/existing-bookings" element={
+                            <RequireAuthAdmin>
+                                <Bookings/>
+                            </RequireAuthAdmin>
+                        }/>
                         <Route path="/find-booking" element={<FindBooking/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/register" element={<Registration/>}/>
-                        <Route path="/profile" element={<Profile/>}/>
-                        <Route path="/logout" element={<Logout/>}/>
+                        <Route path="/profile" element={
+                            <RequireAuth>
+                                <Profile/>
+                            </RequireAuth>
+                        }/>
+                        <Route path="/logout" element={
+                            <RequireAuth>
+                                <Logout/>
+                            </RequireAuth>
+                        }/>
                     </Routes>
                 </Router>
                 <Footer/>

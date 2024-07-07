@@ -1,25 +1,13 @@
-import React, { useState } from "react"
+import React, {useEffect, useState} from "react"
 import moment from "moment"
-import { cancelBooking, getBookingByConfirmationCode } from "../utils/ApiFunctions"
+import {cancelBooking, getBookingByConfirmationCode} from "../utils/ApiFunctions"
+import {useLocation} from "react-router-dom";
 
 const FindBooking = () => {
-    const [confirmationCode, setConfirmationCode] = useState("")
+    const [confirmationCode, setConfirmationCode] = useState(useLocation().state.currentBooking.bookingConfirmation)
     const [error, setError] = useState(null)
     const [successMessage, setSuccessMessage] = useState("")
     const [isLoading, setIsLoading] = useState(false)
-    const [bookingInfo, setBookingInfo] = useState({
-        id: "",
-        checkInDate: "",
-        checkOutDate: "",
-        guestFullName: "",
-        guestEmail: "",
-        numberOfAdults: 0,
-        numberOfChildren: 0,
-        totalNumberOfGuests: 0,
-        bookingConfirmation: "",
-        room: { id: "", roomType: "" },
-    })
-
     const emptyBookingInfo = {
         id: "",
         checkInDate: "",
@@ -30,8 +18,9 @@ const FindBooking = () => {
         numberOfChildren: 0,
         totalNumberOfGuests: 0,
         bookingConfirmation: "",
-        room: { id: "", roomType: "" },
+        room: {id: "", roomType: ""},
     }
+    const [bookingInfo, setBookingInfo] = useState(useLocation().state.currentBooking);
     const [isDeleted, setIsDeleted] = useState(false)
 
     const handleInputChange = (event) => {
@@ -74,7 +63,7 @@ const FindBooking = () => {
     return (
         <>
             <div className="container mt-5 d-flex flex-column justify-content-center align-items-center">
-                <h2 className="text-center mb-4">Find My Booking</h2>
+                <h2 className="text-center mb-4">My Booking</h2>
                 <form onSubmit={handleFormSubmit} className="col-md-6">
                     <div className="input-group mb-3">
                         <input
@@ -82,7 +71,7 @@ const FindBooking = () => {
                             type="text"
                             id="confirmationCode"
                             name="confirmationCode"
-                            value={confirmationCode}
+                            defaultValue={confirmationCode}
                             onChange={handleInputChange}
                             placeholder="Enter the booking confirmation code"
                         />
@@ -92,7 +81,6 @@ const FindBooking = () => {
                         </button>
                     </div>
                 </form>
-
                 {isLoading ? (
                     <div>Finding your booking...</div>
                 ) : error ? (

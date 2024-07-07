@@ -6,15 +6,18 @@ import {AuthContext} from "../auth/AuthProvider.jsx";
 
 const NavBar = () => {
     const [showAccount, setShowAccount] = useState(false)
-    const {user} = useContext(AuthContext)
 
     const handleAccountClick = () => {
-        setShowAccount(!showAccount)
+        setShowAccount(true)
     }
 
-    // const isLoggedIn = localStorage.getItem("token")
-    const isLoggedIn = user !== null
-    const userRole = localStorage.getItem("userRole")
+    const auth = useContext(AuthContext);
+    const userEmail = localStorage.getItem("userEmail");
+    const userRole = localStorage.getItem("userRole");
+
+    const isLogged = () => {
+        return auth.user !== null;
+    }
 
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary px-5 shadow mt-5 sticky-top">
@@ -42,7 +45,7 @@ const NavBar = () => {
                             </NavLink>
                         </li>
 
-                        {isLoggedIn && userRole.includes("ROLE_ADMIN") && (
+                        {isLogged() && userRole.includes("ROLE_ADMIN") && (
                             <li className="nav-item">
                                 <NavLink className="nav-link" aria-current="page" to={"/admin"}>
                                     Admin
@@ -67,24 +70,24 @@ const NavBar = () => {
                                 aria-expanded="false"
                                 onClick={handleAccountClick}>
                                 {" "}
-                                Account
+                                {isLogged() ? (
+                                    <>{userEmail}</>
+                                ) : (
+                                    <>Account</>
+                                )}
                             </a>
 
                             <ul
-                                className={`dropdown-menu ${showAccount ? "show" : ""}`}
+                                className={`dropdown-menu show`}
                                 aria-labelledby="navbarDropdown">
 
-                                {isLoggedIn ? (
-                                <li>
+                                {isLogged() ? (
                                     <Logout/>
-                                </li>
-                            ) : (
-                                <li>
+                                ) : (
                                     <Link className="dropdown-item" to={"/login"}>
                                         Login
                                     </Link>
-                                </li>
-                            )}
+                                )}
                             </ul>
                         </li>
                     </ul>

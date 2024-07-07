@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 
 const RoomFilter = ({data, setFilteredData}) => {
-    const [filter, setFilter] = useState('');
+    const [filter, setFilter] = useState("");
 
     const handleSelectChange = (e) => {
         const selectedRoomType = e.target.value;
@@ -12,7 +12,7 @@ const RoomFilter = ({data, setFilteredData}) => {
         setFilteredData(filteredRooms);
     }
 
-    const clearFilter =() => {
+    const clearFilter = () => {
         setFilter("")
         setFilteredData(data)
     }
@@ -28,11 +28,14 @@ const RoomFilter = ({data, setFilteredData}) => {
                 className="form-select"
                 value={filter}
                 onChange={handleSelectChange}>
-                <option className={""} > select a room type to filter....</option>
                 {roomTypes.map((roomType, index) => (
-                    <option key={index} value={roomType}>
-                        {roomType}
-                    </option>
+                    index === 0 ? (
+                        <option key={index} value={roomType}>All types</option>
+                    ) : (
+                        <option key={index} value={roomType}>
+                            {roomType}
+                        </option>
+                    )
                 ))}
             </select>
             <button className="btn btn-hotel" type="button" onClick={clearFilter}>

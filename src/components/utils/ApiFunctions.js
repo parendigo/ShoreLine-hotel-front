@@ -21,7 +21,12 @@ export async function addRoom(photo, roomType, roomPrice) {
     formData.append("roomType", roomType);
     formData.append("roomPrice", roomPrice);
 
-    const response = await api.post("/rooms/add/new-room", formData)
+    const response = await api.post("/rooms/add/new-room", formData, {
+        headers :{
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data"
+        }
+    })
     if (response.status === 201) {
         return true
     } else return false
@@ -48,7 +53,9 @@ export async function getAllRooms() {
 
 export async function deleteRoom(roomId) {
     try {
-        const response = await api.delete(`/rooms/delete/room/${roomId}`)
+        const response = await api.delete(`/rooms/delete/room/${roomId}`, {
+            headers : getHeaders()
+        })
         return response.data;
     } catch (error) {
         throw new Error(`Error deleting room ${error.message}`)
@@ -60,7 +67,9 @@ export async function updateRoom(roomId, roomData) {
     formData.append("roomType", roomData.roomType);
     formData.append("roomPrice", roomData.roomPrice);
     formData.append("photo", roomData.photo);
-    const response = await api.put(`/rooms/update/${roomId}`, formData)
+    const response = await api.put(`/rooms/update/${roomId}`, formData, {
+        headers : getHeaders()
+    })
     return response.data
 }
 
@@ -88,7 +97,9 @@ export async function bookRoom(roomId, booking) {
 
 export async function getAllBookings() {
     try {
-        const result = await api.get("/bookings/all-bookings");
+        const result = await api.get("/bookings/all-bookings", {
+            headers : getHeaders()
+        });
         return result.data;
     } catch (e) {
         throw new Error(`Error fetching bookings: ${e.message}`)
@@ -110,6 +121,7 @@ export async function getBookingByConfirmationCode(confirmationCode) {
 export async function cancelBooking(bookingId) {
     try {
         const response = await api.delete(`/bookings/booking/delete/${bookingId}`)
+        console.log(response)
         return response.data;
     } catch (e) {
         throw new Error(`Error deleting booking: ${e.message}`)
@@ -152,9 +164,9 @@ export async function loginUser(login) {
     }
 }
 
-export async function getUserProfile(userId, token) {
+export async function getUserProfile(userEmail, token) {
     try {
-        const response = await api.post(`/users/profile/${userId}`, {
+        const response = await api.post(`/users/profile/${userEmail}`, {
             headers: getHeaders()
         })
         return response.data;
@@ -163,9 +175,9 @@ export async function getUserProfile(userId, token) {
     }
 }
 
-export async function deleteUser(userId, token) {
+export async function deleteUser(userEmail, token) {
     try {
-        const response = await api.delete(`/users/delete/${userId}`, {
+        const response = await api.delete(`/users/delete/${userEmail}`, {
             headers: getHeaders()
         });
         return response.data
@@ -175,10 +187,10 @@ export async function deleteUser(userId, token) {
     }
 }
 
-export async function getUser(userId, token) {
+export async function getUserByEmail(userEmail, token) {
     try {
-        console.log(userId, getHeaders());
-        const response = await api.get(`/users/${userId}`, {
+        console.log(userEmail, getHeaders());
+        const response = await api.get(`/users/${userEmail}`, {
             headers: getHeaders()
         })
         return response.data;
@@ -187,9 +199,9 @@ export async function getUser(userId, token) {
     }
 }
 
-export async function getBookingsByUserId(userId, token) {
+export async function getBookingsByUserEmail(userEmail, token) {
     try {
-        const response = await api.get(`/bookings/all-bookings/${userId}`, {
+        const response = await api.get(`/bookings/all-bookings/${userEmail}`, {
             headers: getHeaders()
         })
         return response.data;

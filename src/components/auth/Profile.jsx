@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react"
-import { deleteUser, getBookingsByUserId, getUser } from "../utils/ApiFunctions"
-import { useNavigate } from "react-router-dom"
+import React, {useEffect, useState} from "react"
+import {deleteUser, getBookingsByUserEmail, getUserByEmail} from "../utils/ApiFunctions"
+import {useNavigate} from "react-router-dom"
 import moment from "moment"
+import FindBooking from "../bookings/FindBooking.jsx";
 
 const Profile = () => {
     const [user, setUser] = useState({
@@ -9,13 +10,13 @@ const Profile = () => {
         email: "",
         firstName: "",
         lastName: "",
-        roles: [{ id: "", name: "" }]
+        roles: [{id: "", name: ""}]
     })
 
     const [bookings, setBookings] = useState([
         {
             id: "",
-            room: { id: "", roomType: "" },
+            room: {id: "", roomType: ""},
             checkInDate: "",
             checkOutDate: "",
             bookingConfirmationCode: ""
@@ -25,13 +26,13 @@ const Profile = () => {
     const [errorMessage, setErrorMessage] = useState("")
     const navigate = useNavigate()
 
-    const userId = localStorage.getItem("userId")
+    const userEmail = localStorage.getItem("userEmail")
     const token = localStorage.getItem("token")
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const userData = await getUser(userId, token)
+                const userData = await getUserByEmail(userEmail, token)
                 setUser(userData)
             } catch (error) {
                 console.error(error)
@@ -39,12 +40,12 @@ const Profile = () => {
         }
 
         fetchUser()
-    }, [userId])
+    }, [userEmail, token])
 
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await getBookingsByUserId(userId, token)
+                const response = await getBookingsByUserEmail(userEmail, token)
                 setBookings(response)
             } catch (error) {
                 console.error("Error fetching bookings:", error.message)
@@ -53,18 +54,18 @@ const Profile = () => {
         }
 
         fetchBookings()
-    }, [userId])
+    }, [userEmail, token])
 
     const handleDeleteAccount = async () => {
         const confirmed = window.confirm(
             "Are you sure you want to delete your account? This action cannot be undone."
         )
         if (confirmed) {
-            await deleteUser(userId)
+            await deleteUser(userEmail)
                 .then((response) => {
                     setMessage(response.data)
                     localStorage.removeItem("token")
-                    localStorage.removeItem("userId")
+                    localStorage.removeItem("userEmail")
                     localStorage.removeItem("userRole")
                     navigate("/")
                     window.location.reload()
@@ -75,12 +76,17 @@ const Profile = () => {
         }
     }
 
+    const navigateToFindBookings = (currentBooking) => {
+        console.log(currentBooking)
+        navigate('/find-booking', {state: {currentBooking: currentBooking}})
+    }
+
     return (
         <div className="container">
             {errorMessage && <p className="text-danger">{errorMessage}</p>}
             {message && <p className="text-danger">{message}</p>}
             {user ? (
-                <div className="card p-5 mt-5" style={{ backgroundColor: "whitesmoke" }}>
+                <div className="card p-5 mt-5" style={{backgroundColor: "whitesmoke"}}>
                     <h4 className="card-title text-center">User Information</h4>
                     <div className="card-body">
                         <div className="col-md-10 mx-auto">
@@ -92,7 +98,7 @@ const Profile = () => {
                                                 src="https://themindfulaimanifesto.org/wp-content/uploads/2020/09/male-placeholder-image.jpeg"
                                                 alt="Profile"
                                                 className="rounded-circle"
-                                                style={{ width: "150px", height: "150px", objectFit: "cover" }}
+                                                style={{width: "150px", height: "150px", objectFit: "cover"}}
                                             />
                                         </div>
                                     </div>
@@ -105,7 +111,7 @@ const Profile = () => {
                                                     <p className="card-text">{user.id}</p>
                                                 </div>
                                             </div>
-                                            <hr />
+                                            <hr/>
 
                                             <div className="form-group row">
                                                 <label className="col-md-2 col-form-label fw-bold">First Name:</label>
@@ -113,7 +119,7 @@ const Profile = () => {
                                                     <p className="card-text">{user.firstName}</p>
                                                 </div>
                                             </div>
-                                            <hr />
+                                            <hr/>
 
                                             <div className="form-group row">
                                                 <label className="col-md-2 col-form-label fw-bold">Last Name:</label>
@@ -121,7 +127,7 @@ const Profile = () => {
                                                     <p className="card-text">{user.lastName}</p>
                                                 </div>
                                             </div>
-                                            <hr />
+                                            <hr/>
 
                                             <div className="form-group row">
                                                 <label className="col-md-2 col-form-label fw-bold">Email:</label>
@@ -129,7 +135,7 @@ const Profile = () => {
                                                     <p className="card-text">{user.email}</p>
                                                 </div>
                                             </div>
-                                            <hr />
+                                            <hr/>
 
                                             <div className="form-group row">
                                                 <label className="col-md-2 col-form-label fw-bold">Roles:</label>
@@ -148,11 +154,11 @@ const Profile = () => {
                                 </div>
                             </div>
 
-                            <h4 className="card-title text-center">Booking History</h4>
+                            <h4 className="card-title text-center">Current Bookings</h4>
 
                             {bookings ? (
                                 <table className="table table-bordered table-hover shadow">
-                                    <thead>
+                                    <thead onClick={FindBooking}>
                                     <tr>
                                         <th scope="col">Booking ID</th>
                                         <th scope="col">Room ID</th>
@@ -165,7 +171,7 @@ const Profile = () => {
                                     </thead>
                                     <tbody>
                                     {bookings.map((booking, index) => (
-                                        <tr key={index}>
+                                        <tr key={index} onDoubleClick={() => navigateToFindBookings(booking.bookingConfirmation)}>
                                             <td>{booking.id}</td>
                                             <td>{booking.room.id}</td>
                                             <td>{booking.room.roomType}</td>
@@ -178,7 +184,9 @@ const Profile = () => {
                                                     .format("MMM Do, YYYY")}
                                             </td>
                                             <td>{booking.bookingConfirmation}</td>
-                                            <td className="text-success">On-going</td>
+                                            <td className="text-success">
+                                                <button className='btn btn-sm btn-hotel' onClick={() =>navigateToFindBookings(booking)}>on-going</button>
+                                            </td>
                                         </tr>
                                     ))}
                                     </tbody>
