@@ -1,5 +1,5 @@
 ![image](https://github.com/parendigo/ShoreLine-hotel-front/assets/49822143/f6fbf300-cac2-41ad-9c44-3c0fe8441008)
+![image](https://github.com/parendigo/ShoreLine-hotel-front/assets/49822143/ceb7ed0a-4c13-4a2c-a852-93a6576cc131)
 ![image](https://github.com/parendigo/ShoreLine-hotel-front/assets/49822143/c247324e-b954-4e23-81d1-aa69064f8942)
 ![image](https://github.com/parendigo/ShoreLine-hotel-front/assets/49822143/71a450e1-37f8-4ad2-8fdc-22d43c94de88)
 ![image](https://github.com/parendigo/ShoreLine-hotel-front/assets/49822143/5294e7cc-1e9d-4dc4-84ea-8afd7756e37c)
-![image](https://github.com/parendigo/ShoreLine-hotel-front/assets/49822143/ceb7ed0a-4c13-4a2c-a852-93a6576cc131)
